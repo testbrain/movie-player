@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Movie - Movie Player</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: #0a0a0a;
+            z-index: 1000;
+            padding: 20px 60px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #e50914 0%, #ff4d4d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #e5e5e5;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: #e50914;
+        }
+
+        .logout-btn {
+            color: #e50914;
+        }
+
+        .user-welcome {
+            color: #808080;
+            font-size: 0.8rem;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 120px 20px 60px;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #141414 100%);
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #e50914;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            gap: 12px;
+            color: #ff0a1f;
+        }
+
+        /* Header Section */
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header-section h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #fff 0%, #e50914 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-section p {
+            color: #b3b3b3;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .required {
+            color: #e50914;
+            margin-left: 4px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #fff;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #e50914;
+            background: #2f2f2f;
+            box-shadow: 0 0 0 3px rgba(229,9,20,0.1);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #808080;
+        }
+
+        /* File Input */
+        .file-input {
+            padding: 12px;
+            background: #2a2a2a;
+            border: 2px dashed #3a3a3a;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .file-input:hover {
+            border-color: #e50914;
+            background: #2f2f2f;
+        }
+
+        /* Image Preview */
+        .preview-container {
+            margin-top: 15px;
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 2px solid #e50914;
+        }
+
+        .preview-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Priority Select */
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+        }
+
+        /* Hint Text */
+        .hint {
+            font-size: 0.75rem;
+            color: #808080;
+            margin-top: 6px;
+            font-weight: 400;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #e50914 0%, #ff4d4d 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(229,9,20,0.4);
+        }
+
+        /* Messages */
+        .error-message, .success-message {
+            padding: 14px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+            font-weight: 500;
+        }
+
+        .error-message {
+            background: rgba(229,9,20,0.2);
+            border-left: 4px solid #e50914;
+            color: #ff6b6b;
+        }
+
+        .success-message {
+            background: rgba(76,175,80,0.2);
+            border-left: 4px solid #4caf50;
+            color: #81c784;
+        }
+
+        /* Access Denied */
+        .access-denied {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #141414 100%);
+            border-radius: 20px;
+            margin-top: 100px;
+        }
+
+        .access-denied .emoji {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .access-denied h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .access-denied p {
+            color: #b3b3b3;
+            margin-bottom: 30px;
+        }
+
+        .access-denied a {
+            display: inline-block;
+            background: #e50914;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .access-denied a:hover {
+            background: #ff0a1f;
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-card {
+            animation: slideUp 0.6s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .container {
+                padding: 100px 15px 40px;
+            }
+
+            .form-card {
+                padding: 30px 25px;
+            }
+
+            .header-section h1 {
+                font-size: 1.8rem;
+            }
+
+            .header-section p {
+                font-size: 0.9rem;
+            }
+
+            input, select {
+                padding: 12px 14px;
+                font-size: 0.9rem;
+            }
+
+            .submit-btn {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-card {
+                padding: 25px 20px;
+            }
+
+            .header-section h1 {
+                font-size: 1.5rem;
+            }
+
+            .preview-image {
+                max-width: 150px;
+            }
+            
+            .user-welcome {
+                display: none;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #e50914;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff0a1f;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">MOVIE PLAYER</div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/add-movie" class="nav-link" style="color: #e50914;">Add Movie</a>
+                <% if (user) { %>
+                    <a href="/logout" class="nav-link logout-btn">Logout</a>
+                    <span class="user-welcome">Welcome, <%= user.username %></span>
+                <% } %>
+            </div>
+        </div>
+    </header>
+
+    <% if (user && user.role === 'admin') { %>
+        <div class="container">
+            <div class="form-card">
+                <a href="/" class="back-link">
+                    ← Back to Movies
+                </a>
+                
+                <div class="header-section">
+                    <h1>Add New Movie</h1>
+                    <p>Add your favorite movie to the collection</p>
+                </div>
+
+                <% if (error) { %>
+                    <div class="error-message">
+                        ⚠️ <%= error %>
+                    </div>
+                <% } %>
+
+                <% if (success) { %>
+                    <div class="success-message">
+                        ✅ <%= success %>
+                    </div>
+                <% } %>
+
+                <form action="/add-movie" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label>
+                            Category <span class="required">*</span>
+                        </label>
+                        <input type="text" 
+                               name="category" 
+                               placeholder="e.g., Hollywood, Bollywood, Anime, Action, Drama"
+                               required>
+                        <div class="hint">Choose or create a category for your movie</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Movie Name <span class="required">*</span>
+                        </label>
+                        <input type="text" 
+                               name="movieName" 
+                               placeholder="Enter the movie name"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Movie Poster (Optional)</label>
+                        <input type="file" 
+                               name="poster" 
+                               class="file-input" 
+                               accept="image/*" 
+                               onchange="previewImage(this)">
+                        <div class="preview-container" id="previewContainer">
+                            <div class="preview-image">
+                                <img id="previewImg" src="" alt="Preview">
+                            </div>
+                        </div>
+                        <div class="hint">Upload a poster image (JPG, PNG, GIF, WebP). Leave empty for placeholder</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Movie URL <span class="required">*</span>
+                        </label>
+                        <input type="url" 
+                               name="movieUrl" 
+                               placeholder="https://example.com/movie"
+                               required>
+                        <div class="hint">Link where users can watch this movie</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tag (Optional)</label>
+                        <input type="text" 
+                               name="tag" 
+                               placeholder="e.g., trending, new, recommended, oscar">
+                        <div class="hint">Add a tag to help categorize your movie</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Priority <span class="required">*</span>
+                        </label>
+                        <select name="priority">
+                            <option value="10">⭐ 10 - Highest Priority</option>
+                            <option value="9">⭐ 9 - Very High</option>
+                            <option value="8">⭐ 8 - High</option>
+                            <option value="7">⭐ 7 - Above Average</option>
+                            <option value="6">⭐ 6 - Good</option>
+                            <option value="5">⭐ 5 - Average</option>
+                            <option value="4">⭐ 4 - Below Average</option>
+                            <option value="3">⭐ 3 - Low</option>
+                            <option value="2">⭐ 2 - Very Low</option>
+                            <option value="1" selected>⭐ 1 - Lowest Priority</option>
+                        </select>
+                        <div class="hint">Higher priority movies will appear first in the list</div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        + Add Movie to Collection
+                    </button>
+                </form>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="container">
+            <div class="access-denied">
+                <div class="emoji">🔒</div>
+                <h2>Access Denied</h2>
+                <p>You need admin privileges to add movies.</p>
+                <a href="/login">Login as Admin</a>
+                <div style="margin-top: 20px;">
+                    <a href="/" style="color: #e50914; text-decoration: none;">← Back to Home</a>
+                </div>
+            </div>
+        </div>
+    <% } %>
+
+    <script>
+        function previewImage(input) {
+            const previewContainer = document.getElementById('previewContainer');
+            const previewImg = document.getElementById('previewImg');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                previewContainer.style.display = 'none';
+                previewImg.src = '';
+            }
+        }
+    </script>
+</body>
+</html>

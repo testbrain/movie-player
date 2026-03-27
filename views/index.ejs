@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎬 Movie Collection</title>
+    <title>Movie Player - Stream Your Favorite Movies</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,144 +14,404 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
         }
 
+        /* Header */
         .header {
-            text-align: center;
-            margin-bottom: 50px;
-            animation: fadeInDown 0.8s ease;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 50%, transparent 100%);
+            z-index: 1000;
+            padding: 20px 60px;
+            transition: all 0.3s ease;
         }
 
-        .header h1 {
-            font-size: 3rem;
-            color: white;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-            margin-bottom: 10px;
+        .header.scrolled {
+            background: #0a0a0a;
+            padding: 15px 60px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.5);
         }
 
-        .header p {
-            color: rgba(255,255,255,0.9);
-            font-size: 1.2rem;
-        }
-
-        .movie-count {
-            background: rgba(255,255,255,0.2);
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            margin-top: 15px;
-            font-size: 0.9rem;
-        }
-
-        .error-message {
-            background: #f44336;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            text-align: center;
-            animation: shake 0.5s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .error-message a {
-            color: white;
-            text-decoration: underline;
-        }
-
-        .movie-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            animation: fadeInUp 0.8s ease;
-        }
-
-        .movie-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-
-        .movie-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
-
-        .movie-poster {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 200px;
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
             display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .movie-icon {
-            font-size: 4rem;
-        }
-
-        .movie-info {
-            padding: 20px;
-        }
-
-        .movie-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #e50914 0%, #ff4d4d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
             flex-wrap: wrap;
         }
 
-        .movie-year {
-            color: #667eea;
-            font-size: 0.9rem;
-            font-weight: normal;
+        .nav-link {
+            color: #e5e5e5;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
         }
 
-        .movie-rating {
-            color: #ffc107;
-            margin: 10px 0;
+        .nav-link:hover {
+            color: #e50914;
+        }
+
+        .add-movie-btn {
+            background: #e50914;
+            color: white;
+            padding: 8px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-movie-btn:hover {
+            background: #ff0a1f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(229,9,20,0.4);
+        }
+
+        .logout-btn {
+            color: #e50914;
+        }
+
+        .user-welcome {
+            color: #808080;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 60vh;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero-content {
+            z-index: 2;
+            max-width: 900px;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, #e50914 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #b3b3b3;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: #e50914;
+            color: white;
+            padding: 12px 32px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+
+        .btn-primary:hover {
+            background: #ff0a1f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(229,9,20,0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(109, 109, 110, 0.7);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(109, 109, 110, 0.9);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 60px 40px;
+        }
+
+        /* Category Section */
+        .category-section {
+            margin-bottom: 50px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.3px;
+        }
+
+        .section-count {
+            color: #808080;
             font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Movie Row - Horizontal Scroll */
+        .movies-row {
+            position: relative;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            padding: 10px 0 20px;
+        }
+
+        .movies-row::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .movies-row::-webkit-scrollbar-track {
+            background: #2a2a2a;
+            border-radius: 3px;
+        }
+
+        .movies-row::-webkit-scrollbar-thumb {
+            background: #e50914;
+            border-radius: 3px;
+        }
+
+        /* Movie Card - Fixed Layout */
+        .movie-card {
+            display: inline-flex;
+            flex-direction: column;
+            width: 180px;
+            margin-right: 20px;
+            vertical-align: top;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .movie-poster {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 270px;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            margin-bottom: 12px;
+        }
+
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s;
+        }
+
+        .movie-card:hover .movie-poster img {
+            transform: scale(1.05);
+        }
+
+        .movie-poster .placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #808080;
+            font-size: 2rem;
+        }
+
+        /* Badges */
+        .priority-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(4px);
+            color: #ffd700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            z-index: 2;
+            letter-spacing: 0.3px;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(229,9,20,0.95);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            z-index: 2;
+            transition: all 0.2s ease;
+            opacity: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .movie-card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            background: #ff0a1f;
+            transform: scale(1.05);
+        }
+
+        /* Movie Info - Vertical Layout */
+        .movie-info {
+            padding: 0 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .movie-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.4;
+            white-space: normal;
+            word-wrap: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 40px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(229,9,14,0.15);
+            color: #e50914;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            width: fit-content;
+            letter-spacing: 0.3px;
         }
 
         .movie-link {
             display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-top: 4px;
+            padding: 8px 12px;
+            background: #e50914;
             color: white;
             text-decoration: none;
             border-radius: 8px;
-            transition: transform 0.2s ease;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
             text-align: center;
             width: 100%;
-            font-weight: 500;
         }
 
         .movie-link:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: #ff0a1f;
+            transform: scale(1.02);
         }
 
+        /* Messages */
+        .error-message, .success-message {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+            font-weight: 500;
+        }
+
+        .error-message {
+            background: #e50914;
+            color: white;
+        }
+
+        .success-message {
+            background: #4caf50;
+            color: white;
+        }
+
+        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 60px;
-            background: white;
-            border-radius: 15px;
-            animation: fadeIn 0.8s ease;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+            border-radius: 16px;
         }
 
         .empty-state .emoji {
@@ -158,118 +420,280 @@
         }
 
         .empty-state h3 {
-            color: #333;
             margin-bottom: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
         }
 
         .empty-state p {
-            color: #666;
+            color: #808080;
+            font-weight: 400;
         }
 
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Footer */
+        .footer {
+            background: #0a0a0a;
+            padding: 40px 60px;
+            border-top: 1px solid #2a2a2a;
+            margin-top: 60px;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+            color: #808080;
+            font-size: 0.8rem;
+            font-weight: 400;
         }
 
+        /* Animations */
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category-section {
+            animation: slideUp 0.6s ease forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                padding: 0 40px 40px;
+            }
+            
+            .movie-card {
+                width: 160px;
+            }
+            
+            .movie-poster {
+                height: 240px;
+            }
         }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
+            .header {
+                padding: 15px 20px;
             }
             
-            .movie-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
+            .header.scrolled {
+                padding: 12px 20px;
             }
             
-            body {
-                padding: 20px 15px;
+            .main-content {
+                padding: 0 20px 40px;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .movie-card {
+                width: 140px;
+                margin-right: 15px;
+            }
+            
+            .movie-poster {
+                height: 210px;
+            }
+            
+            .section-title {
+                font-size: 1.3rem;
+            }
+            
+            .footer {
+                padding: 30px 20px;
+            }
+            
+            .nav-links {
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .movie-card {
+                width: 130px;
+                margin-right: 12px;
+            }
+            
+            .movie-poster {
+                height: 195px;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                gap: 12px;
+                align-items: center;
+            }
+            
+            .btn-primary, .btn-secondary {
+                padding: 10px 24px;
+                font-size: 0.9rem;
+                width: 200px;
+            }
+            
+            .movie-name {
+                font-size: 0.85rem;
+            }
+            
+            .nav-links {
+                gap: 12px;
+            }
+            
+            .user-welcome {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🎬 Movie Collection</h1>
-            <p>Discover and explore amazing movies</p>
-            <% if (movies.length > 0) { %>
-                <div class="movie-count">📽️ <%= movies.length %> movies available</div>
-            <% } %>
+    <header class="header" id="header">
+        <div class="nav-container">
+            <div class="logo">MOVIE PLAYER</div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="#movies-section" class="nav-link" id="browseMoviesLink">Movies</a>
+                <% if (user) { %>
+                    <% if (user.role === 'admin') { %>
+                        <a href="/add-movie" class="add-movie-btn">
+                            <span>+</span> Add Movie
+                        </a>
+                    <% } %>
+                    <a href="/logout" class="nav-link logout-btn">Logout</a>
+                    <span class="user-welcome">Welcome, <%= user.username %></span>
+                <% } else { %>
+                    <a href="/login" class="nav-link">Login</a>
+                <% } %>
+            </div>
         </div>
+    </header>
 
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Unlimited Movies,<br>Anywhere, Anytime</h1>
+            <p>Watch your favorite movies instantly. Stream on any device, no limits.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary" id="browseMoviesBtn">Browse Movies</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content" id="movies-section">
         <% if (error) { %>
             <div class="error-message">
                 ⚠️ <%= error %>
-                <br><br>
-                <small>To fix this: Go to MongoDB Atlas → Network Access → Add IP Address → Add 0.0.0.0/0 (allow all) or add Render.com IP ranges</small>
             </div>
         <% } %>
 
-        <% if (movies && movies.length > 0) { %>
-            <div class="movie-grid">
-                <% movies.forEach((movie) => { %>
-                    <div class="movie-card">
-                        <div class="movie-poster">
-                            <div class="movie-icon">🎥</div>
-                        </div>
-                        <div class="movie-info">
-                            <div class="movie-title">
-                                <%= movie.name %>
-                                <% if (movie.year) { %>
-                                    <span class="movie-year">(<%= movie.year %>)</span>
-                                <% } %>
-                            </div>
-                            <% if (movie.rating) { %>
-                                <div class="movie-rating">
-                                    ⭐ <%= movie.rating %> / 10
-                                </div>
-                            <% } %>
-                            <a href="<%= movie.link %>" class="movie-link" target="_blank" rel="noopener noreferrer">
-                                Watch Now ▶
-                            </a>
-                        </div>
-                    </div>
-                <% }) %>
+        <% if (success) { %>
+            <div class="success-message">
+                ✅ <%= success %>
             </div>
-        <% } else if (!error) { %>
+        <% } %>
+
+        <% if (groupedMovies && Object.keys(groupedMovies).length > 0) { %>
+            <% for (const [category, movies] of Object.entries(groupedMovies)) { %>
+                <div class="category-section">
+                    <div class="section-header">
+                        <h2 class="section-title"><%= category %></h2>
+                        <span class="section-count"><%= movies.length %> titles</span>
+                    </div>
+                    <div class="movies-row">
+                        <% movies.forEach(movie => { %>
+                            <div class="movie-card">
+                                <div class="movie-poster">
+                                    <% if (movie.posterUrl && movie.posterUrl !== '') { %>
+                                        <img src="<%= movie.posterUrl %>" alt="<%= movie.movieName %>" 
+                                             onerror="this.onerror=null; this.parentElement.innerHTML='<div class=placeholder>🎬<br><span style=font-size:0.7rem;>No Poster</span></div>'">
+                                    <% } else { %>
+                                        <div class="placeholder">
+                                            🎬<br>
+                                            <span style="font-size: 0.7rem;">No Poster</span>
+                                        </div>
+                                    <% } %>
+                                    <div class="priority-badge">PRIORITY <%= movie.priority %></div>
+                                    <% if (user && user.role === 'admin') { %>
+                                        <form action="/movie/<%= movie._id %>?_method=DELETE" method="POST" style="display: inline;">
+                                            <button type="submit" class="delete-btn" onclick="return confirm('Remove this movie from your collection?')">✕ Remove</button>
+                                        </form>
+                                    <% } %>
+                                </div>
+                                <div class="movie-info">
+                                    <div class="movie-name" title="<%= movie.movieName %>"><%= movie.movieName %></div>
+                                    <% if (movie.tag && movie.tag !== '') { %>
+                                        <div class="tag">#<%= movie.tag %></div>
+                                    <% } %>
+                                    <a href="<%= movie.movieUrl %>" class="movie-link" target="_blank" rel="noopener noreferrer">
+                                        Watch Now →
+                                    </a>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
+        <% } else { %>
             <div class="empty-state">
-                <div class="emoji">🍿</div>
-                <h3>No movies found</h3>
-                <p>Add some movies to your collection to get started!</p>
+                <div class="emoji">🎬</div>
+                <h3>Your Movie Collection Awaits</h3>
+                <p>Start building your personal movie library today</p>
+                <% if (user && user.role === 'admin') { %>
+                    <a href="/add-movie" style="display: inline-block; margin-top: 20px; background: #e50914; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600;">Add Your First Movie</a>
+                <% } else { %>
+                    <p style="margin-top: 20px; color: #e50914;">Contact admin to add movies</p>
+                <% } %>
             </div>
         <% } %>
     </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>© 2024 Movie Player. All rights reserved.</p>
+            <p style="margin-top: 8px;">Stream your favorite movies anytime, anywhere</p>
+        </div>
+    </footer>
+
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll to movies section
+        function scrollToMovies() {
+            const moviesSection = document.getElementById('movies-section');
+            if (moviesSection) {
+                moviesSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start',
+                    inline: 'nearest'
+                });
+            }
+        }
+
+        // Add click event to browse buttons
+        const browseBtns = document.querySelectorAll('#browseMoviesBtn, #browseMoviesLink');
+        browseBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                scrollToMovies();
+            });
+        });
+    </script>
 </body>
 </html>
