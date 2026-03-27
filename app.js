@@ -31,7 +31,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Cloudinary Configuration (Optional - will work without it)
+// Cloudinary Configuration
 let upload = null;
 let cloudinaryConfigured = false;
 
@@ -42,12 +42,13 @@ try {
     api_secret: process.env.API_SECRET,
   });
   
+  // Just use the already imported CloudinaryStorage
   const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
       folder: 'movie-posters',
       allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
-      transformation: [{ width: 500, height: 700, crop: 'limit' }]
+      transformation: [{ width: 500, heinpmght: 700, crop: 'limit' }]
     }
   });
   
@@ -56,6 +57,7 @@ try {
   console.log('✅ Cloudinary configured');
 } catch (err) {
   console.log('⚠️ Cloudinary not configured, using local storage');
+  console.log(err.message);
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, 'uploads/')
@@ -76,14 +78,16 @@ const adminSchema = new mongoose.Schema({
 
 const Admin = mongoose.model('Admin', adminSchema);
 
-// Movie Schema
+// Movie Schema - Updated to support multiple categories
 const movieSchema = new mongoose.Schema({
-  category: { type: String, required: true },
+  category: { type: String, required: true }, // For backward compatibility
+  categories: { type: [String], default: [] }, // New field for multiple categories
   movieName: { type: String, required: true },
   movieUrl: { type: String, required: true },
   posterUrl: { type: String, default: '' },
   tag: { type: String, default: '' },
   priority: { type: Number, default: 10, min: 1, max: 10 },
+  views: { type: Number, default: 0 }, // Track views for trending
   createdAt: { type: Date, default: Date.now }
 }, { collection: 'movies' });
 
@@ -101,6 +105,21 @@ const fs = require('fs');
 if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
+
+// ============= COMPLETE CATEGORY LIST =============
+const ALL_CATEGORIES = [
+  "Action", "Adventure", "Sci-Fi", "Thriller", "Horror", "Comedy", "Drama", "Romance", "Fantasy",
+  "Netflix Originals", "Amazon Prime Exclusive", "Apple TV+", "HBO Max Originals", "Hulu Picks",
+  "Bollywood", "South Indian Cinema", "Punjabi Films", "Indian Indie", "Anime", "Korean Drama", "K-Movie",
+  "European Cinema", "Spanish Thriller", "French New Wave", "Documentary", "Biopic", "Crime", "Mystery",
+  "Superhero", "Marvel/DC", "Animation", "Family", "Musical", "Western", "Cult Classics", "Oscar Winners",
+  "Film Noir", "Psychological Thriller", "Sitcom", "Stand-up Special", "Reality TV", "War", "History",
+  "Sports", "Teen Drama", "Coming of Age", "LGBTQ+", "Experimental", "Zombie", "Vampire",
+  "Cyberpunk", "Steampunk", "Apocalyptic", "Kaiju", "Wuxia", "Martial Arts", "Gangster", "Heist",
+  "Courtroom Drama", "Political Thriller", "Rom-Com", "Dark Comedy", "Mockumentary", "Road Movie",
+  "Holiday", "Christmas Special", "Nature", "Space Opera", "Time Travel", "Alternate History",
+  "Streaming Exclusive", "Trending Now", "Binge-Worthy", "Critics' Pick", "Audience Favorite"
+];
 
 // ============= AUTH MIDDLEWARE =============
 // Check if user is logged in
@@ -125,21 +144,96 @@ function isAdmin(req, res, next) {
 // Home route - Group movies by category (public)
 app.get('/', async (req, res) => {
   try {
-    const movies = await Movie.find().sort({ priority: -1, createdAt: -1 });
+    const { category } = req.query;
     
+    let movies;
+    let selectedCategory = null;
+    
+    if (category) {
+      // Filter movies by category (checks both old category field and new categories array)
+      movies = await Movie.find({
+        $or: [
+          { category: category },
+          { categories: category }
+        ]
+      }).sort({ priority: -1, views: -1, createdAt: -1 });
+      selectedCategory = category;
+    } else {
+      movies = await Movie.find().sort({ priority: -1, views: -1, createdAt: -1 });
+    }
+    
+    // Get trending videos (latest 10 with most views or highest priority)
+    const trendingMovies = await Movie.find()
+      .sort({ views: -1, priority: -1, createdAt: -1 })
+      .limit(10);
+    
+    // Group movies by category for the category section
     const groupedMovies = movies.reduce((groups, movie) => {
-      const category = movie.category;
-      if (!groups[category]) {
-        groups[category] = [];
-      }
-      groups[category].push(movie);
+      // Use categories array if available, otherwise use single category
+      const movieCategories = movie.categories && movie.categories.length > 0 
+        ? movie.categories 
+        : [movie.category];
+      
+      movieCategories.forEach(cat => {
+        if (!groups[cat]) {
+          groups[cat] = [];
+        }
+        groups[cat].push(movie);
+      });
       return groups;
     }, {});
     
-    res.render('index', { groupedMovies, error: null, success: null });
+    // Sort categories alphabetically
+    const sortedGroupedMovies = {};
+    Object.keys(groupedMovies).sort().forEach(key => {
+      sortedGroupedMovies[key] = groupedMovies[key];
+    });
+    
+    res.render('index', { 
+      groupedMovies: sortedGroupedMovies, 
+      trendingMovies,
+      allCategories: ALL_CATEGORIES,
+      selectedCategory,
+      error: null, 
+      success: null 
+    });
   } catch (err) {
     console.error('Error fetching movies:', err);
-    res.render('index', { groupedMovies: {}, error: 'Failed to load movies', success: null });
+    res.render('index', { 
+      groupedMovies: {}, 
+      trendingMovies: [],
+      allCategories: ALL_CATEGORIES,
+      selectedCategory: null,
+      error: 'Failed to load movies', 
+      success: null 
+    });
+  }
+});
+
+// API endpoint to get movies by category (for AJAX loading)
+app.get('/api/movies/category/:category', async (req, res) => {
+  try {
+    const { category } = req.params;
+    const movies = await Movie.find({
+      $or: [
+        { category: category },
+        { categories: category }
+      ]
+    }).sort({ priority: -1, views: -1, createdAt: -1 });
+    
+    res.json({ success: true, movies });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Increment view count when movie is played
+app.post('/api/movies/:id/view', async (req, res) => {
+  try {
+    await Movie.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
@@ -193,22 +287,44 @@ app.get('/logout', (req, res) => {
 
 // Add movie form route (admin only)
 app.get('/add-movie', isAuthenticated, isAdmin, (req, res) => {
-  res.render('add-movie', { error: null, success: null });
+  res.render('add-movie', { 
+    error: null, 
+    success: null,
+    allCategories: ALL_CATEGORIES
+  });
 });
 
-// Submit new movie (admin only)
+// Submit new movie (admin only) - Updated to handle multiple categories
 app.post('/add-movie', isAuthenticated, isAdmin, upload.single('poster'), async (req, res) => {
   try {
     console.log('Received form data:', req.body);
     console.log('Received file:', req.file);
     
-    const { category, movieName, movieUrl, tag, priority } = req.body;
+    const { category, categories, movieName, movieUrl, tag, priority } = req.body;
+    
+    // Handle categories (support both old single category and new multi-category)
+    let categoriesArray = [];
+    
+    if (categories) {
+      // If categories is a string, split by comma (from multi-select)
+      if (typeof categories === 'string') {
+        categoriesArray = categories.split(',').map(c => c.trim()).filter(c => c);
+      } else if (Array.isArray(categories)) {
+        categoriesArray = categories;
+      }
+    }
+    
+    // If no categories in array but single category exists, use that
+    if (categoriesArray.length === 0 && category) {
+      categoriesArray = [category];
+    }
     
     // Validate required fields
-    if (!category || !movieName || !movieUrl) {
+    if (categoriesArray.length === 0 || !movieName || !movieUrl) {
       return res.render('add-movie', { 
-        error: 'Please fill all required fields', 
-        success: null 
+        error: 'Please fill all required fields and select at least one category', 
+        success: null,
+        allCategories: ALL_CATEGORIES
       });
     }
     
@@ -227,12 +343,14 @@ app.post('/add-movie', isAuthenticated, isAdmin, upload.single('poster'), async 
     }
     
     const newMovie = new Movie({
-      category,
+      category: categoriesArray[0], // Keep for backward compatibility
+      categories: categoriesArray,
       movieName,
       movieUrl,
       posterUrl: posterUrl,
       tag: tag || '',
-      priority: parseInt(priority) || 10
+      priority: parseInt(priority) || 10,
+      views: 0
     });
     
     await newMovie.save();
@@ -245,7 +363,8 @@ app.post('/add-movie', isAuthenticated, isAdmin, upload.single('poster'), async 
     console.error('Error stack:', err.stack);
     res.render('add-movie', { 
       error: 'Failed to add movie: ' + err.message, 
-      success: null 
+      success: null,
+      allCategories: ALL_CATEGORIES
     });
   }
 });
@@ -253,7 +372,6 @@ app.post('/add-movie', isAuthenticated, isAdmin, upload.single('poster'), async 
 // Delete movie route (admin only)
 app.delete('/movie/:id', isAuthenticated, isAdmin, async (req, res) => {
   try {
-    const movie = await Movie.findById(req.params.id);
     await Movie.findByIdAndDelete(req.params.id);
     res.redirect('/');
   } catch (err) {
@@ -262,11 +380,17 @@ app.delete('/movie/:id', isAuthenticated, isAdmin, async (req, res) => {
   }
 });
 
+// Get all categories API endpoint
+app.get('/api/categories', (req, res) => {
+  res.json({ categories: ALL_CATEGORIES });
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📁 Cloudinary: ${cloudinaryConfigured ? 'Configured' : 'Not configured (using local storage)'}`);
   console.log(`👥 Admin users: Login with admin credentials`);
+  console.log(`📚 Total categories available: ${ALL_CATEGORIES.length}`);
 });
 
 // ============= CREATE DEFAULT ADMIN (Run once) =============

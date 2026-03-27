@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Movie Player - Stream Your Favorite Movies</title>
-    <!-- Google Fonts -->
+    <!-- Google Fonts & Font Awesome -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -20,7 +21,6 @@
             overflow-x: hidden;
         }
 
-        /* Smooth Scroll */
         html {
             scroll-behavior: smooth;
         }
@@ -30,107 +30,60 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 50%, transparent 100%);
             z-index: 1000;
-            padding: 20px 60px;
             transition: all 0.3s ease;
+            background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
         }
 
         .header.scrolled {
-            background: #0a0a0a;
-            padding: 15px 60px;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.5);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #e50914 0%, #ff4d4d 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .nav-link {
-            color: #e5e5e5;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-link:hover {
-            color: #e50914;
-        }
-
-        .add-movie-btn {
-            background: #e50914;
-            color: white;
-            padding: 8px 24px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .add-movie-btn:hover {
-            background: #ff0a1f;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(229,9,20,0.4);
-        }
-
-        .logout-btn {
-            color: #e50914;
-        }
-
-        .user-welcome {
-            color: #808080;
-            font-size: 0.8rem;
-            font-weight: 500;
+            background: rgba(10, 10, 10, 0.98);
+            padding: 12px 60px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.6);
+            backdrop-filter: blur(2px);
         }
 
         /* Hero Section */
         .hero {
-            height: 60vh;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            height: 85vh;
+            min-height: 620px;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
+            background: linear-gradient(135deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.5) 100%), 
+                        url('https://res.cloudinary.com/dmtgtme2e/image/upload/v1774607273/poster_tyl4sb.png');
+            background-size: cover;
+            background-position: center 30%;
+            background-repeat: no-repeat;
+            transition: all 0.4s ease;
+            border-bottom: 3px solid rgba(229,9,20,0.5);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(0deg, rgba(10,10,10,0.85) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.2) 100%);
+            z-index: 1;
         }
 
         .hero-content {
-            z-index: 2;
+            z-index: 3;
             max-width: 900px;
-            padding: 0 20px;
+            padding: 0 24px;
+            position: relative;
+            animation: fadeInUp 0.9s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
 
         .hero h1 {
-            font-size: 4.5rem;
+            font-size: 4.8rem;
             font-weight: 800;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #fff 0%, #e50914 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #e50914 90%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -138,64 +91,266 @@
         }
 
         .hero p {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 400;
-            color: #b3b3b3;
+            color: #f0f0f0;
             margin-bottom: 35px;
             line-height: 1.6;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
         }
 
         .btn-primary {
             background: #e50914;
             color: white;
-            padding: 12px 32px;
-            border-radius: 6px;
+            padding: 14px 38px;
+            border-radius: 40px;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
             transition: all 0.3s;
             cursor: pointer;
             border: none;
             font-family: 'Inter', sans-serif;
-            font-size: 1rem;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 14px rgba(229,9,20,0.4);
         }
 
         .btn-primary:hover {
-            background: #ff0a1f;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(229,9,20,0.4);
-        }
-
-        .btn-secondary {
-            background: rgba(109, 109, 110, 0.7);
-            color: white;
-            padding: 12px 32px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(109, 109, 110, 0.9);
-            transform: translateY(-2px);
+            background: #ff1a2c;
+            transform: translateY(-3px);
         }
 
         /* Main Content */
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 60px 40px;
+            padding: 40px 60px 60px;
+            background: #0a0a0a;
+            position: relative;
+            z-index: 5;
         }
 
-        /* Category Section */
+        /* Category Bar with Horizontal Scroll and Dropdown Button */
+        .category-bar {
+            background: #111;
+            border-radius: 60px;
+            padding: 12px 20px;
+            margin-bottom: 45px;
+            position: sticky;
+            top: 85px;
+            z-index: 90;
+            backdrop-filter: blur(8px);
+            background: rgba(15,15,15,0.95);
+            border: 1px solid #2a2a2a;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Horizontal Scrollable Categories - ALL CATEGORIES */
+        .category-scroll-wrapper {
+            flex: 1;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: thin;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .category-scroll-wrapper::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .category-scroll-wrapper::-webkit-scrollbar-track {
+            background: #222;
+            border-radius: 10px;
+        }
+
+        .category-scroll-wrapper::-webkit-scrollbar-thumb {
+            background: #e50914;
+            border-radius: 10px;
+        }
+
+        .category-scroll {
+            display: flex;
+            gap: 12px;
+            padding: 4px 0;
+            white-space: nowrap;
+        }
+
+        .cat-chip {
+            background: #1f1f2a;
+            color: #ddd;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            border: 1px solid #333;
+            display: inline-block;
+        }
+
+        .cat-chip:hover {
+            background: #e50914;
+            color: white;
+            transform: translateY(-2px);
+            border-color: #e50914;
+        }
+
+        .cat-chip.active {
+            background: #e50914;
+            color: white;
+            border-color: #e50914;
+            box-shadow: 0 2px 12px rgba(229,9,20,0.4);
+        }
+
+        /* Circular Dropdown Button */
+        .dropdown-circle-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e50914, #b00710);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(229,9,20,0.3);
+        }
+
+        .dropdown-circle-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #ff1a2c, #e50914);
+            box-shadow: 0 4px 12px rgba(229,9,20,0.5);
+        }
+
+        .dropdown-circle-btn.active i {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-circle-btn i {
+            color: white;
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        /* Dropdown Menu */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 320px;
+            max-height: 500px;
+            background: #1a1a1f;
+            border-radius: 20px;
+            border: 1px solid #333;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            overflow: hidden;
+            z-index: 1000;
+            display: none;
+            animation: fadeInUp 0.2s ease;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #333;
+            background: #111;
+        }
+
+        .dropdown-header h4 {
+            margin-bottom: 12px;
+            color: #e50914;
+            font-size: 1rem;
+        }
+
+        .dropdown-search {
+            display: flex;
+            align-items: center;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 40px;
+            padding: 8px 16px;
+            gap: 8px;
+        }
+
+        .dropdown-search i {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-search input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+            width: 100%;
+        }
+
+        .dropdown-search input::placeholder {
+            color: #666;
+        }
+
+        .dropdown-categories {
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .dropdown-categories::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .dropdown-categories::-webkit-scrollbar-track {
+            background: #222;
+        }
+
+        .dropdown-categories::-webkit-scrollbar-thumb {
+            background: #e50914;
+            border-radius: 10px;
+        }
+
+        .dropdown-cat-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            color: #ddd;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dropdown-cat-item:hover {
+            background: #e50914;
+            color: white;
+        }
+
+        .dropdown-cat-item i {
+            width: 20px;
+            font-size: 0.8rem;
+            color: #e50914;
+        }
+
+        .dropdown-cat-item:hover i {
+            color: white;
+        }
+
+        .dropdown-cat-item.active {
+            background: #e50914;
+            color: white;
+        }
+
+        /* Section Styles */
         .category-section {
-            margin-bottom: 50px;
+            margin-bottom: 55px;
+            animation: fadeInUp 0.5s ease forwards;
         }
 
         .section-header {
@@ -203,22 +358,26 @@
             justify-content: space-between;
             align-items: baseline;
             margin-bottom: 20px;
+            border-left: 4px solid #e50914;
+            padding-left: 18px;
         }
 
         .section-title {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: #fff;
-            letter-spacing: -0.3px;
         }
 
         .section-count {
-            color: #808080;
+            color: #a0a0a0;
             font-size: 0.9rem;
             font-weight: 500;
+            background: #1f1f1f;
+            padding: 4px 12px;
+            border-radius: 30px;
         }
 
-        /* Movie Row - Horizontal Scroll */
+        /* Movies Row */
         .movies-row {
             position: relative;
             overflow-x: auto;
@@ -227,6 +386,7 @@
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
             padding: 10px 0 20px;
+            scrollbar-width: thin;
         }
 
         .movies-row::-webkit-scrollbar {
@@ -234,49 +394,51 @@
         }
 
         .movies-row::-webkit-scrollbar-track {
-            background: #2a2a2a;
-            border-radius: 3px;
+            background: #1e1e1e;
+            border-radius: 10px;
         }
 
         .movies-row::-webkit-scrollbar-thumb {
             background: #e50914;
-            border-radius: 3px;
+            border-radius: 10px;
         }
 
-        /* Movie Card - Fixed Layout */
+        /* Movie Card */
         .movie-card {
             display: inline-flex;
             flex-direction: column;
-            width: 180px;
-            margin-right: 20px;
+            width: 190px;
+            margin-right: 24px;
             vertical-align: top;
-            transition: transform 0.3s ease;
+            transition: transform 0.25s ease;
             cursor: pointer;
             position: relative;
+            border-radius: 16px;
         }
 
         .movie-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-8px) scale(1.01);
         }
 
         .movie-poster {
             position: relative;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            height: 270px;
-            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-            margin-bottom: 12px;
+            height: 285px;
+            background: linear-gradient(145deg, #222, #111);
+            margin-bottom: 14px;
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.5);
         }
 
         .movie-poster img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: all 0.3s;
+            transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
 
         .movie-card:hover .movie-poster img {
-            transform: scale(1.05);
+            transform: scale(1.06);
         }
 
         .movie-poster .placeholder {
@@ -285,42 +447,42 @@
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            color: #808080;
+            color: #aaa;
             font-size: 2rem;
+            background: rgba(0,0,0,0.5);
+            width: 100%;
+            padding: 12px;
         }
 
-        /* Badges */
         .priority-badge {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(4px);
-            color: #ffd700;
-            padding: 4px 8px;
-            border-radius: 6px;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(6px);
+            color: #ffd966;
+            padding: 5px 10px;
+            border-radius: 30px;
             font-size: 0.7rem;
-            font-weight: 700;
+            font-weight: 800;
             z-index: 2;
-            letter-spacing: 0.3px;
         }
 
         .delete-btn {
             position: absolute;
-            top: 8px;
-            left: 8px;
+            top: 12px;
+            left: 12px;
             background: rgba(229,9,20,0.95);
             color: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 6px;
+            padding: 6px 12px;
+            border-radius: 30px;
             cursor: pointer;
             font-size: 0.7rem;
-            font-weight: 600;
+            font-weight: 700;
             z-index: 2;
-            transition: all 0.2s ease;
             opacity: 0;
-            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
         }
 
         .movie-card:hover .delete-btn {
@@ -328,22 +490,20 @@
         }
 
         .delete-btn:hover {
-            background: #ff0a1f;
-            transform: scale(1.05);
+            background: #ff3333;
         }
 
-        /* Movie Info - Vertical Layout */
         .movie-info {
-            padding: 0 4px;
+            padding: 0 6px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .movie-name {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 600;
-            color: #fff;
+            color: #f5f5f5;
             line-height: 1.4;
             white-space: normal;
             word-wrap: break-word;
@@ -351,29 +511,28 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            min-height: 40px;
+            min-height: 44px;
         }
 
         .tag {
             display: inline-block;
-            background: rgba(229,9,14,0.15);
-            color: #e50914;
-            padding: 3px 10px;
-            border-radius: 20px;
+            background: rgba(229,9,14,0.2);
+            color: #ff6b6b;
+            padding: 4px 12px;
+            border-radius: 30px;
             font-size: 0.7rem;
             font-weight: 600;
             width: fit-content;
-            letter-spacing: 0.3px;
         }
 
         .movie-link {
             display: inline-block;
-            margin-top: 4px;
+            margin-top: 6px;
             padding: 8px 12px;
-            background: #e50914;
+            background: linear-gradient(90deg, #e50914, #b00710);
             color: white;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 40px;
             font-size: 0.8rem;
             font-weight: 600;
             transition: all 0.2s ease;
@@ -382,197 +541,64 @@
         }
 
         .movie-link:hover {
-            background: #ff0a1f;
-            transform: scale(1.02);
+            background: linear-gradient(90deg, #ff1a2c, #e50914);
         }
 
-        /* Messages */
-        .error-message, .success-message {
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            text-align: center;
-            animation: fadeIn 0.5s ease;
-            font-weight: 500;
-        }
-
-        .error-message {
-            background: #e50914;
-            color: white;
-        }
-
-        .success-message {
-            background: #4caf50;
-            color: white;
-        }
-
-        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 80px 20px;
-            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
-            border-radius: 16px;
+            padding: 90px 20px;
+            background: linear-gradient(135deg, #111, #080808);
+            border-radius: 32px;
+            border: 1px solid #2a2a2a;
         }
 
-        .empty-state .emoji {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
-
-        .empty-state h3 {
-            margin-bottom: 10px;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .empty-state p {
-            color: #808080;
-            font-weight: 400;
-        }
-
-        /* Footer */
         .footer {
-            background: #0a0a0a;
+            background: #030303;
             padding: 40px 60px;
-            border-top: 1px solid #2a2a2a;
-            margin-top: 60px;
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
+            border-top: 1px solid #222;
+            margin-top: 20px;
             text-align: center;
             color: #808080;
-            font-size: 0.8rem;
-            font-weight: 400;
         }
 
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .category-section {
-            animation: slideUp 0.6s ease forwards;
-        }
-
-        /* Responsive */
         @media (max-width: 1024px) {
-            .main-content {
-                padding: 0 40px 40px;
-            }
-            
-            .movie-card {
-                width: 160px;
-            }
-            
-            .movie-poster {
-                height: 240px;
-            }
+            .main-content { padding: 30px 40px 50px; }
+            .movie-card { width: 170px; }
+            .movie-poster { height: 255px; }
+            .hero h1 { font-size: 3.8rem; }
         }
 
         @media (max-width: 768px) {
-            .header {
-                padding: 15px 20px;
-            }
-            
-            .header.scrolled {
-                padding: 12px 20px;
-            }
-            
-            .main-content {
-                padding: 0 20px 40px;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero p {
-                font-size: 1rem;
-            }
-            
-            .movie-card {
-                width: 140px;
-                margin-right: 15px;
-            }
-            
-            .movie-poster {
-                height: 210px;
-            }
-            
-            .section-title {
-                font-size: 1.3rem;
-            }
-            
-            .footer {
-                padding: 30px 20px;
-            }
-            
-            .nav-links {
-                gap: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .movie-card {
-                width: 130px;
-                margin-right: 12px;
-            }
-            
-            .movie-poster {
-                height: 195px;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                gap: 12px;
-                align-items: center;
-            }
-            
-            .btn-primary, .btn-secondary {
-                padding: 10px 24px;
-                font-size: 0.9rem;
-                width: 200px;
-            }
-            
-            .movie-name {
-                font-size: 0.85rem;
-            }
-            
-            .nav-links {
-                gap: 12px;
-            }
-            
-            .user-welcome {
-                display: none;
-            }
+            .main-content { padding: 20px 20px 40px; }
+            .hero h1 { font-size: 2.5rem; }
+            .movie-card { width: 150px; }
+            .movie-poster { height: 225px; }
+            .category-bar { top: 70px; }
+            .section-title { font-size: 1.5rem; }
+            .dropdown-menu { width: 280px; right: -10px; }
         }
     </style>
 </head>
 <body>
     <header class="header" id="header">
-        <div class="nav-container">
-            <div class="logo">MOVIE PLAYER</div>
-            <div class="nav-links">
-                <a href="/" class="nav-link">Home</a>
-                <a href="#movies-section" class="nav-link" id="browseMoviesLink">Movies</a>
+        <div class="nav-container" style="max-width: 1400px; margin:0 auto; display: flex; justify-content: space-between; align-items: center; padding: 12px 24px;">
+            <div class="logo" style="font-size: 26px; font-weight:800; background: linear-gradient(135deg, #e50914 0%, #ff6666 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">MOVIE PLAYER</div>
+            <div class="nav-links" style="display: flex; gap: 28px; align-items: center;">
+                <a href="/" class="nav-link" style="color:#e5e5e5; text-decoration:none;">Home</a>
+                <a href="#movies-section" class="nav-link" id="browseMoviesLink" style="color:#e5e5e5;">Movies</a>
                 <% if (user) { %>
                     <% if (user.role === 'admin') { %>
-                        <a href="/add-movie" class="add-movie-btn">
-                            <span>+</span> Add Movie
-                        </a>
+                        <a href="/add-movie" style="background:#e50914; color:white; padding: 6px 20px; border-radius:30px; text-decoration:none; font-weight:600;">+ Add Movie</a>
                     <% } %>
-                    <a href="/logout" class="nav-link logout-btn">Logout</a>
-                    <span class="user-welcome">Welcome, <%= user.username %></span>
+                    <a href="/logout" style="color:#e50914; text-decoration:none;">Logout</a>
+                    <span style="color:#aaa; font-size:0.8rem;">Welcome, <%= user.username %></span>
                 <% } else { %>
-                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/login" style="color:#e5e5e5; text-decoration:none;">Login</a>
                 <% } %>
             </div>
         </div>
@@ -582,118 +608,395 @@
         <div class="hero-content">
             <h1>Unlimited Movies,<br>Anywhere, Anytime</h1>
             <p>Watch your favorite movies instantly. Stream on any device, no limits.</p>
-            <div class="hero-buttons">
-                <button class="btn-primary" id="browseMoviesBtn">Browse Movies</button>
-            </div>
+            <button class="btn-primary" id="browseMoviesBtn">Browse Movies</button>
         </div>
     </div>
 
     <div class="main-content" id="movies-section">
         <% if (error) { %>
-            <div class="error-message">
-                ⚠️ <%= error %>
-            </div>
+            <div class="error-message" style="background:#e50914dd; padding:14px; border-radius:60px; margin-bottom:32px;"><%= error %></div>
         <% } %>
-
         <% if (success) { %>
-            <div class="success-message">
-                ✅ <%= success %>
-            </div>
+            <div class="success-message" style="background:#2e7d32dd; padding:14px; border-radius:60px; margin-bottom:32px;"><%= success %></div>
         <% } %>
 
-        <% if (groupedMovies && Object.keys(groupedMovies).length > 0) { %>
-            <% for (const [category, movies] of Object.entries(groupedMovies)) { %>
-                <div class="category-section">
-                    <div class="section-header">
-                        <h2 class="section-title"><%= category %></h2>
-                        <span class="section-count"><%= movies.length %> titles</span>
+        <!-- Category Bar with Horizontal Scroll (ALL CATEGORIES) + Circular Dropdown Button for Search -->
+        <div class="category-bar">
+            <div class="category-scroll-wrapper">
+                <div class="category-scroll" id="categoryScrollContainer">
+                    <!-- All categories will be populated here -->
+                </div>
+            </div>
+            <div class="dropdown-container">
+                <button class="dropdown-circle-btn" id="dropdownBtn">
+                    <i class="fas fa-search"></i>
+                </button>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-header">
+                        <h4><i class="fas fa-tags"></i> Search Categories</h4>
+                        <div class="dropdown-search">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="dropdownSearchInput" placeholder="Type to search categories..." autocomplete="off">
+                        </div>
                     </div>
-                    <div class="movies-row">
-                        <% movies.forEach(movie => { %>
-                            <div class="movie-card">
-                                <div class="movie-poster">
-                                    <% if (movie.posterUrl && movie.posterUrl !== '') { %>
-                                        <img src="<%= movie.posterUrl %>" alt="<%= movie.movieName %>" 
-                                             onerror="this.onerror=null; this.parentElement.innerHTML='<div class=placeholder>🎬<br><span style=font-size:0.7rem;>No Poster</span></div>'">
-                                    <% } else { %>
-                                        <div class="placeholder">
-                                            🎬<br>
-                                            <span style="font-size: 0.7rem;">No Poster</span>
-                                        </div>
-                                    <% } %>
-                                    <div class="priority-badge">PRIORITY <%= movie.priority %></div>
-                                    <% if (user && user.role === 'admin') { %>
-                                        <form action="/movie/<%= movie._id %>?_method=DELETE" method="POST" style="display: inline;">
-                                            <button type="submit" class="delete-btn" onclick="return confirm('Remove this movie from your collection?')">✕ Remove</button>
-                                        </form>
-                                    <% } %>
-                                </div>
-                                <div class="movie-info">
-                                    <div class="movie-name" title="<%= movie.movieName %>"><%= movie.movieName %></div>
-                                    <% if (movie.tag && movie.tag !== '') { %>
-                                        <div class="tag">#<%= movie.tag %></div>
-                                    <% } %>
-                                    <a href="<%= movie.movieUrl %>" class="movie-link" target="_blank" rel="noopener noreferrer">
-                                        Watch Now →
-                                    </a>
-                                </div>
-                            </div>
-                        <% }) %>
+                    <div class="dropdown-categories" id="dropdownCategoriesList">
+                        <!-- Search results will be populated here -->
                     </div>
                 </div>
-            <% } %>
-        <% } else { %>
-            <div class="empty-state">
-                <div class="emoji">🎬</div>
-                <h3>Your Movie Collection Awaits</h3>
-                <p>Start building your personal movie library today</p>
-                <% if (user && user.role === 'admin') { %>
-                    <a href="/add-movie" style="display: inline-block; margin-top: 20px; background: #e50914; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600;">Add Your First Movie</a>
-                <% } else { %>
-                    <p style="margin-top: 20px; color: #e50914;">Contact admin to add movies</p>
-                <% } %>
             </div>
-        <% } %>
+        </div>
+
+        <!-- Trending Movies Section -->
+        <div class="category-section" id="trendingSection">
+            <div class="section-header">
+                <h2 class="section-title">🔥 Trending Now</h2>
+                <span class="section-count" id="trendingCount">0 titles</span>
+            </div>
+            <div class="movies-row" id="trendingRow"></div>
+        </div>
+
+        <!-- Dynamic Category Sections Container -->
+        <div id="dynamicCategoriesContainer"></div>
     </div>
 
     <footer class="footer">
-        <div class="footer-content">
-            <p>© 2024 Movie Player. All rights reserved.</p>
-            <p style="margin-top: 8px;">Stream your favorite movies anytime, anywhere</p>
-        </div>
+        <p>© 2025 Movie Player. All rights reserved.</p>
+        <p style="margin-top: 8px;">Stream your favorite movies anytime, anywhere — Cinematic Experience</p>
     </footer>
 
     <script>
-        // Header scroll effect
-        window.addEventListener('scroll', function() {
-            const header = document.getElementById('header');
-            if (window.scrollY > 100) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
+        const ALL_CATEGORIES = [
+            "Action", "Adventure", "Sci-Fi", "Thriller", "Horror", "Comedy", "Drama", "Romance", "Fantasy",
+            "Netflix Originals", "Amazon Prime Exclusive", "Apple TV+", "HBO Max Originals", "Hulu Picks",
+            "Bollywood", "South Indian Cinema", "Punjabi Films", "Indian Indie", "Anime", "Korean Drama", "K-Movie",
+            "European Cinema", "Spanish Thriller", "French New Wave", "Documentary", "Biopic", "Crime", "Mystery",
+            "Superhero", "Marvel/DC", "Animation", "Family", "Musical", "Western", "Cult Classics", "Oscar Winners",
+            "Film Noir", "Psychological Thriller", "Sitcom", "Stand-up Special", "Reality TV", "War", "History",
+            "Sports", "Teen Drama", "Coming of Age", "LGBTQ+", "Experimental", "Silent Era", "Zombie", "Vampire",
+            "Cyberpunk", "Steampunk", "Apocalyptic", "Kaiju", "Wuxia", "Martial Arts", "Gangster", "Heist",
+            "Courtroom Drama", "Political Thriller", "Rom-Com", "Dark Comedy", "Mockumentary", "Road Movie",
+            "Holiday", "Christmas Special", "Nature", "Space Opera", "Time Travel", "Alternate History",
+            "Streaming Exclusive", "Trending Now", "Binge-Worthy", "Critics' Pick", "Audience Favorite"
+        ];
 
-        // Smooth scroll to movies section
-        function scrollToMovies() {
-            const moviesSection = document.getElementById('movies-section');
-            if (moviesSection) {
-                moviesSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start',
-                    inline: 'nearest'
-                });
-            }
+        let allMovies = [];
+        try {
+            const movieList = [];
+            <% if (groupedMovies) { %>
+                <% for (const [cat, movies] of Object.entries(groupedMovies)) { %>
+                    <% movies.forEach(m => { 
+                        const movieName = m.movieName ? String(m.movieName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;') : 'Untitled';
+                        const posterUrl = m.posterUrl ? String(m.posterUrl).replace(/\\/g, '\\\\').replace(/'/g, "\\'") : '';
+                        const movieUrl = m.movieUrl ? String(m.movieUrl).replace(/\\/g, '\\\\').replace(/'/g, "\\'") : '#';
+                        const tag = m.tag ? String(m.tag).replace(/\\/g, '\\\\').replace(/'/g, "\\'") : '';
+                        const priority = m.priority || 0;
+                        const movieId = m._id ? String(m._id) : '';
+                    %>
+                        movieList.push({
+                            _id: "<%= movieId %>",
+                            movieName: `<%- movieName %>`,
+                            posterUrl: `<%- posterUrl %>`,
+                            movieUrl: `<%- movieUrl %>`,
+                            priority: <%= priority %>,
+                            tag: `<%- tag %>`,
+                            category: `<%- cat.replace(/\\/g, '\\\\').replace(/'/g, "\\'") %>`
+                        });
+                    <% }); %>
+                <% } %>
+            <% } %>
+            allMovies = movieList;
+        } catch(e) { 
+            console.warn('Error loading movies:', e); 
+            allMovies = []; 
         }
 
-        // Add click event to browse buttons
-        const browseBtns = document.querySelectorAll('#browseMoviesBtn, #browseMoviesLink');
-        browseBtns.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                scrollToMovies();
+        let currentFilterCategory = 'all';
+        let dropdownSearchTerm = '';
+
+        function escapeHtml(str) { 
+            if(!str) return ''; 
+            return String(str).replace(/[&<>]/g, function(m){
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
             });
-        });
+        }
+
+        function escapeAttr(str) { 
+            if(!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); 
+        }
+
+        function renderMovieCard(movie, isAdmin = false) {
+            const posterHtml = movie.posterUrl && movie.posterUrl !== '' 
+                ? `<img src="${escapeHtml(movie.posterUrl)}" alt="${escapeHtml(movie.movieName)}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=placeholder>🎬<br><span style=font-size:0.7rem;>No Poster</span></div>'">`
+                : `<div class="placeholder">🎬<br><span style="font-size: 0.7rem;">No Poster</span></div>`;
+            
+            const adminDeleteBtn = isAdmin ? 
+                `<form action="/movie/${movie._id}?_method=DELETE" method="POST" style="display: inline;" onsubmit="return confirm('Remove this movie?')">
+                    <button type="submit" class="delete-btn">✕ Remove</button>
+                </form>` : '';
+            
+            return `
+                <div class="movie-card">
+                    <div class="movie-poster">
+                        ${posterHtml}
+                        <div class="priority-badge">PRIORITY ${movie.priority}</div>
+                        ${adminDeleteBtn}
+                    </div>
+                    <div class="movie-info">
+                        <div class="movie-name" title="${escapeHtml(movie.movieName)}">${escapeHtml(movie.movieName)}</div>
+                        ${movie.tag ? `<div class="tag">#${escapeHtml(movie.tag)}</div>` : ''}
+                        <a href="${escapeHtml(movie.movieUrl)}" class="movie-link" target="_blank" rel="noopener noreferrer">Watch Now →</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        const isAdminUser = <%= user && user.role === 'admin' ? 'true' : 'false' %>;
+
+        function getTrendingMovies() {
+            return [...allMovies].sort((a,b) => b.priority - a.priority).slice(0, 10);
+        }
+
+        function getAllCategoriesWithMovies() {
+            const catMap = new Map();
+            allMovies.forEach(movie => {
+                const cat = movie.category || "Uncategorized";
+                if (!catMap.has(cat)) catMap.set(cat, []);
+                catMap.get(cat).push(movie);
+            });
+            const categories = Array.from(catMap.entries()).map(([name, movies]) => ({ name, movies }));
+            categories.sort((a,b) => a.name.localeCompare(b.name));
+            return categories;
+        }
+
+        function renderAllCategorySections() {
+            const container = document.getElementById('dynamicCategoriesContainer');
+            if (!container) return;
+            const categoriesData = getAllCategoriesWithMovies();
+            if (categoriesData.length === 0) {
+                container.innerHTML = `<div class="empty-state"><div class="emoji">🎬✨</div><h3>No Movies Found</h3><p>Add some movies to see categories</p></div>`;
+                return;
+            }
+            let html = '';
+            categoriesData.forEach(cat => {
+                if (cat.movies.length === 0) return;
+                html += `
+                    <div class="category-section" data-category-name="${escapeHtml(cat.name)}">
+                        <div class="section-header">
+                            <h2 class="section-title">${escapeHtml(cat.name)}</h2>
+                            <span class="section-count">${cat.movies.length} titles</span>
+                        </div>
+                        <div class="movies-row">
+                            ${cat.movies.map(movie => renderMovieCard(movie, isAdminUser)).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderTrendingSection() {
+            const trendingMovies = getTrendingMovies();
+            const trendingRow = document.getElementById('trendingRow');
+            const trendingCountSpan = document.getElementById('trendingCount');
+            if (trendingRow) {
+                if (trendingMovies.length === 0) {
+                    trendingRow.innerHTML = `<div style="padding:40px; text-align:center; width:100%; color:#888;">No trending movies available</div>`;
+                    if(trendingCountSpan) trendingCountSpan.innerText = '0 titles';
+                } else {
+                    trendingRow.innerHTML = trendingMovies.map(m => renderMovieCard(m, isAdminUser)).join('');
+                    if(trendingCountSpan) trendingCountSpan.innerText = `${trendingMovies.length} titles`;
+                }
+            }
+        }
+        
+        function filterMoviesByCategory(categoryName) {
+            currentFilterCategory = categoryName;
+            const container = document.getElementById('dynamicCategoriesContainer');
+            if (!container) return;
+            
+            if (categoryName === 'all') {
+                renderAllCategorySections();
+            } else {
+                const filteredMovies = allMovies.filter(m => (m.category || "Uncategorized") === categoryName);
+                if (filteredMovies.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><div class="emoji">🎬🔍</div><h3>No movies in "${escapeHtml(categoryName)}"</h3><p>Check back later for new additions</p></div>`;
+                } else {
+                    container.innerHTML = `
+                        <div class="category-section">
+                            <div class="section-header">
+                                <h2 class="section-title">${escapeHtml(categoryName)} Movies</h2>
+                                <span class="section-count">${filteredMovies.length} titles</span>
+                            </div>
+                            <div class="movies-row">
+                                ${filteredMovies.map(m => renderMovieCard(m, isAdminUser)).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            updateActiveChip(categoryName);
+        }
+        
+        function updateActiveChip(categoryName) {
+            document.querySelectorAll('.cat-chip').forEach(chip => {
+                const catVal = chip.getAttribute('data-category');
+                if ((catVal === categoryName) || (categoryName === 'all' && catVal === 'all')) {
+                    chip.classList.add('active');
+                } else {
+                    chip.classList.remove('active');
+                }
+            });
+        }
+        
+        // Build HORIZONTAL SCROLL with ALL CATEGORIES
+        function buildHorizontalCategories() {
+            const container = document.getElementById('categoryScrollContainer');
+            if (!container) return;
+            
+            let chipsHtml = `<div class="cat-chip active" data-category="all">🎬 All Movies</div>`;
+            
+            // Show ALL categories from ALL_CATEGORIES array
+            ALL_CATEGORIES.forEach(cat => {
+                chipsHtml += `<div class="cat-chip" data-category="${escapeAttr(cat)}">${escapeHtml(cat)}</div>`;
+            });
+            
+            container.innerHTML = chipsHtml;
+            updateActiveChip(currentFilterCategory);
+            
+            // Add click event listeners to horizontal chips
+            document.querySelectorAll('.cat-chip').forEach(chip => {
+                chip.addEventListener('click', function(e) {
+                    const category = this.getAttribute('data-category');
+                    filterMoviesByCategory(category);
+                    closeDropdown();
+                });
+            });
+        }
+        
+        // Build DROPDOWN with search functionality
+        function buildDropdownCategories(searchTerm = '') {
+            const container = document.getElementById('dropdownCategoriesList');
+            if (!container) return;
+            
+            let filteredCategories = [...new Set(ALL_CATEGORIES)];
+            if (searchTerm) {
+                filteredCategories = filteredCategories.filter(cat => 
+                    cat.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            
+            if (filteredCategories.length === 0) {
+                container.innerHTML = `<div style="padding: 20px; text-align: center; color: #888;">No categories found</div>`;
+                return;
+            }
+            
+            let html = '';
+            filteredCategories.forEach(cat => {
+                const isActive = currentFilterCategory === cat;
+                html += `
+                    <div class="dropdown-cat-item ${isActive ? 'active' : ''}" data-category="${escapeAttr(cat)}">
+                        <i class="fas fa-tag"></i>
+                        <span>${escapeHtml(cat)}</span>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            document.querySelectorAll('.dropdown-cat-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    filterMoviesByCategory(category);
+                    closeDropdown();
+                    // Scroll the horizontal category into view
+                    const targetChip = document.querySelector(`.cat-chip[data-category="${escapeAttr(category)}"]`);
+                    if (targetChip) {
+                        targetChip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    }
+                });
+            });
+        }
+        
+        function toggleDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            const btn = document.getElementById('dropdownBtn');
+            menu.classList.toggle('show');
+            btn.classList.toggle('active');
+            
+            if (menu.classList.contains('show')) {
+                buildDropdownCategories(dropdownSearchTerm);
+                document.getElementById('dropdownSearchInput').focus();
+            }
+        }
+        
+        function closeDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            const btn = document.getElementById('dropdownBtn');
+            menu.classList.remove('show');
+            btn.classList.remove('active');
+        }
+        
+        function initDropdownSearch() {
+            const searchInput = document.getElementById('dropdownSearchInput');
+            searchInput.addEventListener('input', function(e) {
+                dropdownSearchTerm = e.target.value;
+                buildDropdownCategories(dropdownSearchTerm);
+            });
+        }
+        
+        function init() {
+            renderTrendingSection();
+            buildHorizontalCategories(); // Show ALL categories horizontally
+            renderAllCategorySections();
+            
+            const dropdownBtn = document.getElementById('dropdownBtn');
+            dropdownBtn.addEventListener('click', toggleDropdown);
+            
+            document.addEventListener('click', function(e) {
+                if (!dropdownBtn.contains(e.target) && !document.getElementById('dropdownMenu').contains(e.target)) {
+                    closeDropdown();
+                }
+            });
+            
+            initDropdownSearch();
+            
+            window.addEventListener('scroll', function() {
+                const header = document.getElementById('header');
+                if (window.scrollY > 80) header.classList.add('scrolled');
+                else header.classList.remove('scrolled');
+            });
+            
+            const browseBtns = document.querySelectorAll('#browseMoviesBtn, #browseMoviesLink');
+            browseBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const moviesSection = document.getElementById('movies-section');
+                    if(moviesSection) {
+                        const offset = 80;
+                        const pos = moviesSection.getBoundingClientRect().top + window.pageYOffset - offset;
+                        window.scrollTo({ top: pos, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            window.addEventListener('scroll', function() {
+                const heroSection = document.querySelector('.hero');
+                if (heroSection && window.scrollY <= window.innerHeight) {
+                    const scrollVal = window.scrollY * 0.35;
+                    heroSection.style.backgroundPosition = `center ${30 + scrollVal * 0.08}%`;
+                }
+            });
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
     </script>
 </body>
 </html>

@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Movie - Movie Player</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Add Movie - Multi-Category Selector | Cinematic Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,8 +14,8 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            color: #fff;
+            background: radial-gradient(circle at 20% 30%, #0a0a0f, #020202);
+            color: #f0f0f0;
             min-height: 100vh;
         }
 
@@ -24,10 +24,12 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: #0a0a0a;
+            background: rgba(8, 8, 12, 0.96);
+            backdrop-filter: blur(14px);
             z-index: 1000;
-            padding: 20px 60px;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+            padding: 16px 48px;
+            border-bottom: 1px solid rgba(229, 9, 20, 0.4);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
 
         .nav-container {
@@ -36,30 +38,31 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .logo {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 800;
             letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #e50914 0%, #ff4d4d 100%);
+            background: linear-gradient(135deg, #fff, #e50914, #ff6a6a);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .nav-links {
             display: flex;
-            gap: 30px;
+            gap: 32px;
             align-items: center;
         }
 
         .nav-link {
-            color: #e5e5e5;
+            color: #e0e0e0;
             text-decoration: none;
             font-size: 14px;
-            font-weight: 500;
-            transition: color 0.3s;
+            font-weight: 600;
+            transition: 0.2s;
         }
 
         .nav-link:hover {
@@ -67,67 +70,71 @@
         }
 
         .logout-btn {
-            color: #e50914;
+            background: rgba(229,9,20,0.2);
+            padding: 6px 16px;
+            border-radius: 40px;
         }
 
         .user-welcome {
-            color: #808080;
-            font-size: 0.8rem;
+            color: #aaa;
+            font-size: 0.75rem;
+            background: #1e1e2a;
+            padding: 4px 12px;
+            border-radius: 30px;
         }
 
         /* Main Container */
         .container {
-            max-width: 800px;
+            max-width: 960px;
             margin: 0 auto;
-            padding: 120px 20px 60px;
+            padding: 130px 24px 70px;
         }
 
         /* Form Card */
         .form-card {
-            background: linear-gradient(135deg, #1a1a1a 0%, #141414 100%);
-            border-radius: 20px;
-            padding: 50px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(20, 20, 28, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 36px;
+            padding: 44px 48px;
+            box-shadow: 0 30px 50px -20px black;
+            border: 1px solid rgba(229,9,20,0.25);
+            transition: all 0.2s;
         }
 
-        /* Back Link */
         .back-link {
             display: inline-flex;
             align-items: center;
             gap: 8px;
             color: #e50914;
             text-decoration: none;
-            font-weight: 500;
-            margin-bottom: 30px;
-            transition: all 0.3s;
+            font-weight: 600;
+            margin-bottom: 28px;
+            font-size: 0.9rem;
         }
 
         .back-link:hover {
             gap: 12px;
-            color: #ff0a1f;
+            color: #ff4d4d;
         }
 
-        /* Header Section */
         .header-section {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 38px;
         }
 
         .header-section h1 {
             font-size: 2.5rem;
             font-weight: 800;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #fff 0%, #e50914 100%);
+            background: linear-gradient(125deg, #fff, #e50914);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .header-section p {
-            color: #b3b3b3;
-            font-size: 1rem;
-            font-weight: 400;
+            color: #bcbcbc;
+            font-size: 0.9rem;
+            margin-top: 8px;
         }
 
         /* Form Groups */
@@ -138,9 +145,10 @@
         label {
             display: block;
             margin-bottom: 10px;
-            font-weight: 600;
-            color: #fff;
-            font-size: 0.9rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.4px;
+            color: #e5e5e5;
         }
 
         .required {
@@ -148,274 +156,257 @@
             margin-left: 4px;
         }
 
-        input, select, textarea {
+        input, textarea {
             width: 100%;
-            padding: 14px 16px;
-            background: #2a2a2a;
-            border: 2px solid #3a3a3a;
-            border-radius: 10px;
-            font-size: 1rem;
+            padding: 14px 18px;
+            background: #111115;
+            border: 1.5px solid #2c2c38;
+            border-radius: 24px;
+            font-size: 0.95rem;
             color: #fff;
-            transition: all 0.3s ease;
+            transition: 0.2s;
             font-family: 'Inter', sans-serif;
         }
 
-        input:focus, select:focus, textarea:focus {
+        input:focus, textarea:focus {
             outline: none;
             border-color: #e50914;
-            background: #2f2f2f;
-            box-shadow: 0 0 0 3px rgba(229,9,20,0.1);
+            background: #19191f;
+            box-shadow: 0 0 0 3px rgba(229,9,20,0.2);
         }
 
-        input::placeholder, textarea::placeholder {
-            color: #808080;
-        }
-
-        /* File Input */
-        .file-input {
-            padding: 12px;
-            background: #2a2a2a;
-            border: 2px dashed #3a3a3a;
-            cursor: pointer;
+        /* ---------- MULTI-SELECT DROPDOWN (CUSTOM STYLED) ---------- */
+        .multiselect-wrapper {
             position: relative;
+            width: 100%;
         }
 
-        .file-input:hover {
+        .multiselect-btn {
+            width: 100%;
+            padding: 14px 18px;
+            background: #111115;
+            border: 1.5px solid #2c2c38;
+            border-radius: 24px;
+            font-size: 0.95rem;
+            color: #f0f0f0;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .multiselect-btn:hover {
             border-color: #e50914;
-            background: #2f2f2f;
+            background: #1a1a22;
         }
 
-        /* Image Preview */
+        .dropdown-icon {
+            font-size: 12px;
+            transition: transform 0.2s;
+            color: #e50914;
+        }
+
+        .multiselect-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            background: #13131a;
+            border: 1px solid #3a3a44;
+            border-radius: 20px;
+            max-height: 320px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+            backdrop-filter: blur(16px);
+            display: none;
+            padding: 8px 0;
+        }
+
+        .multiselect-dropdown.show {
+            display: block;
+            animation: fadeDropdown 0.2s ease;
+        }
+
+        @keyframes fadeDropdown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category-option {
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.15s;
+            color: #ddd;
+            font-size: 0.9rem;
+        }
+
+        .category-option:hover {
+            background: #2a2a34;
+        }
+
+        .category-option input {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            accent-color: #e50914;
+            cursor: pointer;
+        }
+
+        .category-option label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: none;
+            letter-spacing: normal;
+            width: 100%;
+        }
+
+        .selected-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .tag-badge {
+            background: #e50914;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+        }
+
+        .remove-tag {
+            cursor: pointer;
+            font-weight: bold;
+            background: rgba(0,0,0,0.3);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: 0.1s;
+        }
+
+        .remove-tag:hover {
+            background: rgba(0,0,0,0.7);
+            transform: scale(1.1);
+        }
+
+        .hint {
+            font-size: 0.7rem;
+            color: #8a8a9a;
+            margin-top: 8px;
+        }
+
+        /* File Input & Preview */
+        .file-input {
+            padding: 12px 16px;
+            background: #111115;
+            border: 1.5px dashed #e50914;
+            border-radius: 28px;
+            cursor: pointer;
+        }
         .preview-container {
             margin-top: 15px;
             display: none;
         }
-
         .preview-image {
-            max-width: 200px;
-            border-radius: 12px;
+            max-width: 160px;
+            border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             border: 2px solid #e50914;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
         }
-
         .preview-image img {
             width: 100%;
-            height: auto;
             display: block;
         }
 
-        /* Priority Select */
+        /* Priority select */
         select {
+            width: 100%;
+            padding: 14px 18px;
+            background: #111115;
+            border: 1.5px solid #2c2c38;
+            border-radius: 24px;
+            color: white;
+            font-size: 0.95rem;
             cursor: pointer;
-            appearance: none;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
-            background-repeat: no-repeat;
-            background-position: right 16px center;
         }
 
-        /* Hint Text */
-        .hint {
-            font-size: 0.75rem;
-            color: #808080;
-            margin-top: 6px;
-            font-weight: 400;
-        }
-
-        /* Submit Button */
         .submit-btn {
             width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #e50914 0%, #ff4d4d 100%);
-            color: white;
+            padding: 16px;
+            background: linear-gradient(95deg, #e50914, #b00710);
             border: none;
-            border-radius: 10px;
+            border-radius: 40px;
+            font-weight: 800;
             font-size: 1rem;
-            font-weight: 700;
+            color: white;
             cursor: pointer;
-            transition: all 0.3s ease;
             margin-top: 20px;
-            font-family: 'Inter', sans-serif;
+            transition: 0.2s;
         }
 
         .submit-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(229,9,20,0.4);
+            box-shadow: 0 12px 28px rgba(229,9,20,0.5);
         }
 
-        /* Messages */
         .error-message, .success-message {
             padding: 14px 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
+            border-radius: 28px;
+            margin-bottom: 24px;
             text-align: center;
-            animation: fadeIn 0.5s ease;
             font-weight: 500;
         }
+        .error-message { background: rgba(229,9,20,0.2); border-left: 4px solid #e50914; }
+        .success-message { background: rgba(76,175,80,0.2); border-left: 4px solid #4caf50; }
 
-        .error-message {
-            background: rgba(229,9,20,0.2);
-            border-left: 4px solid #e50914;
-            color: #ff6b6b;
-        }
-
-        .success-message {
-            background: rgba(76,175,80,0.2);
-            border-left: 4px solid #4caf50;
-            color: #81c784;
-        }
-
-        /* Access Denied */
         .access-denied {
             text-align: center;
-            padding: 60px 20px;
-            background: linear-gradient(135deg, #1a1a1a 0%, #141414 100%);
-            border-radius: 20px;
-            margin-top: 100px;
+            padding: 60px 24px;
+            background: rgba(0,0,0,0.65);
+            border-radius: 48px;
+            backdrop-filter: blur(10px);
         }
 
-        .access-denied .emoji {
-            font-size: 4rem;
-            margin-bottom: 20px;
+        @media (max-width: 720px) {
+            .form-card { padding: 28px 20px; }
+            .header { padding: 12px 20px; }
+            .container { padding: 110px 16px 50px; }
+            .header-section h1 { font-size: 1.8rem; }
         }
-
-        .access-denied h2 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .access-denied p {
-            color: #b3b3b3;
-            margin-bottom: 30px;
-        }
-
-        .access-denied a {
-            display: inline-block;
-            background: #e50914;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .access-denied a:hover {
-            background: #ff0a1f;
-            transform: translateY(-2px);
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .form-card {
-            animation: slideUp 0.6s ease;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header {
-                padding: 15px 20px;
-            }
-
-            .container {
-                padding: 100px 15px 40px;
-            }
-
-            .form-card {
-                padding: 30px 25px;
-            }
-
-            .header-section h1 {
-                font-size: 1.8rem;
-            }
-
-            .header-section p {
-                font-size: 0.9rem;
-            }
-
-            input, select {
-                padding: 12px 14px;
-                font-size: 0.9rem;
-            }
-
-            .submit-btn {
-                padding: 12px;
-                font-size: 0.9rem;
-            }
-
-            .nav-links {
-                gap: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .form-card {
-                padding: 25px 20px;
-            }
-
-            .header-section h1 {
-                font-size: 1.5rem;
-            }
-
-            .preview-image {
-                max-width: 150px;
-            }
-            
-            .user-welcome {
-                display: none;
-            }
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #e50914;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ff0a1f;
-        }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #e50914; border-radius: 10px; }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="nav-container">
-            <div class="logo">MOVIE PLAYER</div>
+            <div class="logo">🎬 CINEMATIC VAULT</div>
             <div class="nav-links">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/add-movie" class="nav-link" style="color: #e50914;">Add Movie</a>
+                <a href="/" class="nav-link">🏠 Home</a>
+                <a href="/add-movie" class="nav-link" style="color: #e50914;">✨ Add Movie</a>
                 <% if (user) { %>
-                    <a href="/logout" class="nav-link logout-btn">Logout</a>
-                    <span class="user-welcome">Welcome, <%= user.username %></span>
+                    <a href="/logout" class="nav-link logout-btn">🚪 Logout</a>
+                    <span class="user-welcome">👤 <%= user.username %></span>
                 <% } %>
             </div>
         </div>
@@ -424,140 +415,244 @@
     <% if (user && user.role === 'admin') { %>
         <div class="container">
             <div class="form-card">
-                <a href="/" class="back-link">
-                    ← Back to Movies
-                </a>
-                
+                <a href="/" class="back-link">← Back to Streaming Hub</a>
                 <div class="header-section">
                     <h1>Add New Movie</h1>
-                    <p>Add your favorite movie to the collection</p>
+                    <p>Select multiple categories — Netflix, Prime, Hollywood, Anime & more</p>
                 </div>
 
                 <% if (error) { %>
-                    <div class="error-message">
-                        ⚠️ <%= error %>
-                    </div>
+                    <div class="error-message">⚠️ <%= error %></div>
                 <% } %>
-
                 <% if (success) { %>
-                    <div class="success-message">
-                        ✅ <%= success %>
-                    </div>
+                    <div class="success-message">✅ <%= success %></div>
                 <% } %>
 
-                <form action="/add-movie" method="POST" enctype="multipart/form-data">
+                <form action="/add-movie" method="POST" enctype="multipart/form-data" id="movieForm">
+                    <!-- MULTI-SELECT CATEGORY DROPDOWN (ALL CATEGORIES) -->
                     <div class="form-group">
-                        <label>
-                            Category <span class="required">*</span>
-                        </label>
-                        <input type="text" 
-                               name="category" 
-                               placeholder="e.g., Hollywood, Bollywood, Anime, Action, Drama"
-                               required>
-                        <div class="hint">Choose or create a category for your movie</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>
-                            Movie Name <span class="required">*</span>
-                        </label>
-                        <input type="text" 
-                               name="movieName" 
-                               placeholder="Enter the movie name"
-                               required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Movie Poster (Optional)</label>
-                        <input type="file" 
-                               name="poster" 
-                               class="file-input" 
-                               accept="image/*" 
-                               onchange="previewImage(this)">
-                        <div class="preview-container" id="previewContainer">
-                            <div class="preview-image">
-                                <img id="previewImg" src="" alt="Preview">
+                        <label>🎭 Categories (Multi-Select) <span class="required">*</span></label>
+                        <div class="multiselect-wrapper" id="multiselectWrapper">
+                            <div class="multiselect-btn" id="dropdownBtn">
+                                <span id="selectedCountText">Select categories</span>
+                                <span class="dropdown-icon">▼</span>
+                            </div>
+                            <div class="multiselect-dropdown" id="dropdownList">
+                                <!-- All categories will be injected via JS (complete list from Netflix/Amazon/Global) -->
                             </div>
                         </div>
-                        <div class="hint">Upload a poster image (JPG, PNG, GIF, WebP). Leave empty for placeholder</div>
+                        <div id="selectedTagsContainer" class="selected-tags"></div>
+                        <input type="hidden" name="category" id="categoriesHiddenInput" required>
+                        <div class="hint">✨ Choose one or more: action, drama, anime, bollywood, netflix originals, etc. Ctrl+click style via dropdown.</div>
                     </div>
 
                     <div class="form-group">
-                        <label>
-                            Movie URL <span class="required">*</span>
-                        </label>
-                        <input type="url" 
-                               name="movieUrl" 
-                               placeholder="https://example.com/movie"
-                               required>
-                        <div class="hint">Link where users can watch this movie</div>
+                        <label>🎞️ Movie Name <span class="required">*</span></label>
+                        <input type="text" name="movieName" placeholder="e.g., Dune: Prophecy, The Family Plan, Animal" required>
                     </div>
 
                     <div class="form-group">
-                        <label>Tag (Optional)</label>
-                        <input type="text" 
-                               name="tag" 
-                               placeholder="e.g., trending, new, recommended, oscar">
-                        <div class="hint">Add a tag to help categorize your movie</div>
+                        <label>📸 Movie Poster (Optional)</label>
+                        <input type="file" name="poster" class="file-input" accept="image/*" onchange="previewImage(this)">
+                        <div class="preview-container" id="previewContainer">
+                            <div class="preview-image"><img id="previewImg" src="" alt="preview"></div>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label>
-                            Priority <span class="required">*</span>
-                        </label>
+                        <label>🔗 Movie URL <span class="required">*</span></label>
+                        <input type="url" name="movieUrl" placeholder="https://primevideo.com/... or https://netflix.com/..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🏷️ Tag (Optional)</label>
+                        <input type="text" name="tag" placeholder="e.g., trending, exclusive, oscar2025">
+                    </div>
+
+                    <div class="form-group">
+                        <label>📌 Priority <span class="required">*</span></label>
                         <select name="priority">
-                            <option value="10">⭐ 10 - Highest Priority</option>
-                            <option value="9">⭐ 9 - Very High</option>
-                            <option value="8">⭐ 8 - High</option>
-                            <option value="7">⭐ 7 - Above Average</option>
-                            <option value="6">⭐ 6 - Good</option>
-                            <option value="5">⭐ 5 - Average</option>
-                            <option value="4">⭐ 4 - Below Average</option>
-                            <option value="3">⭐ 3 - Low</option>
-                            <option value="2">⭐ 2 - Very Low</option>
-                            <option value="1" selected>⭐ 1 - Lowest Priority</option>
+                            <option value="10">🔥 10 - Mega Hit</option>
+                            <option value="9">⭐ 9 - Blockbuster</option>
+                            <option value="8">⭐ 8 - Editor's Choice</option>
+                            <option value="7">⭐ 7 - Popular</option>
+                            <option value="6">⭐ 6 - Good Watch</option>
+                            <option value="5" selected>⭐ 5 - Standard</option>
+                            <option value="4">⭐ 4 - Casual</option>
+                            <option value="3">⭐ 3 - Niche</option>
+                            <option value="2">⭐ 2 - Low</option>
+                            <option value="1">⭐ 1 - Archive</option>
                         </select>
-                        <div class="hint">Higher priority movies will appear first in the list</div>
                     </div>
 
-                    <button type="submit" class="submit-btn">
-                        + Add Movie to Collection
-                    </button>
+                    <button type="submit" class="submit-btn">+ Publish Movie (Multi-Category)</button>
                 </form>
             </div>
         </div>
     <% } else { %>
         <div class="container">
             <div class="access-denied">
-                <div class="emoji">🔒</div>
-                <h2>Access Denied</h2>
-                <p>You need admin privileges to add movies.</p>
+                <div class="emoji" style="font-size: 4rem;">🔐</div>
+                <h2>Admin Access Required</h2>
+                <p>Only admins can add movies with multi-category tagging.</p>
                 <a href="/login">Login as Admin</a>
-                <div style="margin-top: 20px;">
-                    <a href="/" style="color: #e50914; text-decoration: none;">← Back to Home</a>
-                </div>
+                <div style="margin-top: 20px;"><a href="/" style="color:#e50914;">← Back to Home</a></div>
             </div>
         </div>
     <% } %>
 
     <script>
+        // ======================== COMPLETE CATEGORY LIST (Netflix, Amazon Prime, Global, Bollywood, Anime etc) ========================
+        const ALL_CATEGORIES = [
+            "Action", "Adventure", "Sci-Fi", "Thriller", "Horror", "Comedy", "Drama", "Romance", "Fantasy",
+            "Netflix Originals", "Amazon Prime Exclusive", "Apple TV+", "HBO Max Originals", "Hulu Picks",
+            "Bollywood", "South Indian Cinema", "Punjabi Films", "Indian Indie", "Anime", "Korean Drama", "K-Movie",
+            "European Cinema", "Spanish Thriller", "French New Wave", "Documentary", "Biopic", "Crime", "Mystery",
+            "Superhero", "Marvel/DC", "Animation", "Family", "Musical", "Western", "Cult Classics", "Oscar Winners",
+            "Film Noir", "Psychological Thriller", "Sitcom", "Stand-up Special", "Reality TV", "War", "History",
+            "Sports", "Teen Drama", "Coming of Age", "LGBTQ+", "Experimental", "Silent Era", "Zombie", "Vampire",
+            "Cyberpunk", "Steampunk", "Apocalyptic", "Kaiju", "Wuxia", "Martial Arts", "Gangster", "Heist",
+            "Courtroom Drama", "Political Thriller", "Rom-Com", "Dark Comedy", "Mockumentary", "Road Movie",
+            "Holiday", "Christmas Special", "Nature", "Space Opera", "Time Travel", "Alternate History",
+            "Streaming Exclusive", "Trending Now", "Binge-Worthy", "Critics' Pick", "Audience Favorite"
+        ];
+
+        // Selected categories state
+        let selectedCategories = [];  // store strings
+
+        const dropdownBtn = document.getElementById('dropdownBtn');
+        const dropdownList = document.getElementById('dropdownList');
+        const selectedTagsContainer = document.getElementById('selectedTagsContainer');
+        const categoriesHiddenInput = document.getElementById('categoriesHiddenInput');
+
+        // Render dropdown with checkboxes
+        function renderDropdown() {
+            dropdownList.innerHTML = '';
+            ALL_CATEGORIES.forEach(cat => {
+                const isChecked = selectedCategories.includes(cat);
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'category-option';
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = cat;
+                checkbox.checked = isChecked;
+                checkbox.addEventListener('change', (e) => {
+                    e.stopPropagation();
+                    if (checkbox.checked) {
+                        if (!selectedCategories.includes(cat)) {
+                            selectedCategories.push(cat);
+                        }
+                    } else {
+                        selectedCategories = selectedCategories.filter(c => c !== cat);
+                    }
+                    updateUI();
+                });
+                const labelSpan = document.createElement('label');
+                labelSpan.textContent = cat;
+                optionDiv.appendChild(checkbox);
+                optionDiv.appendChild(labelSpan);
+                // clicking on div also toggles
+                optionDiv.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'INPUT') {
+                        checkbox.checked = !checkbox.checked;
+                        const event = new Event('change');
+                        checkbox.dispatchEvent(event);
+                    }
+                });
+                dropdownList.appendChild(optionDiv);
+            });
+        }
+
+        // update selected badges & hidden input & button text
+        function updateUI() {
+            // update tags display
+            selectedTagsContainer.innerHTML = '';
+            selectedCategories.forEach(cat => {
+                const badge = document.createElement('span');
+                badge.className = 'tag-badge';
+                badge.innerHTML = `${cat} <span class="remove-tag" data-cat="${cat}">✕</span>`;
+                selectedTagsContainer.appendChild(badge);
+            });
+            // attach remove event listeners
+            document.querySelectorAll('.remove-tag').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const catToRemove = el.getAttribute('data-cat');
+                    selectedCategories = selectedCategories.filter(c => c !== catToRemove);
+                    updateUI();
+                    // also reflect checkboxes in dropdown if dropdown visible
+                    const allCheckboxes = dropdownList.querySelectorAll('input[type="checkbox"]');
+                    allCheckboxes.forEach(cb => {
+                        if (cb.value === catToRemove) cb.checked = false;
+                    });
+                });
+            });
+
+            // update button text
+            const btnSpan = document.getElementById('selectedCountText');
+            if (selectedCategories.length === 0) {
+                btnSpan.textContent = 'Select categories (multi-select)';
+            } else {
+                btnSpan.textContent = `${selectedCategories.length} categor${selectedCategories.length === 1 ? 'y' : 'ies'} selected`;
+            }
+            // update hidden input with comma separated values
+            categoriesHiddenInput.value = selectedCategories.join(',');
+            // validation: if empty, form won't send properly, but we add required check
+            if (selectedCategories.length === 0) {
+                categoriesHiddenInput.setCustomValidity('Please select at least one category');
+            } else {
+                categoriesHiddenInput.setCustomValidity('');
+            }
+        }
+
+        // dropdown toggle
+        dropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownList.classList.toggle('show');
+        });
+
+        // close dropdown if click outside
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('multiselectWrapper');
+            if (!wrapper.contains(e.target)) {
+                dropdownList.classList.remove('show');
+            }
+        });
+
+        // Initialize dropdown, pre-select nothing by default but make sure required works
+        renderDropdown();
+        updateUI();
+
+        // Preview image function
         function previewImage(input) {
             const previewContainer = document.getElementById('previewContainer');
             const previewImg = document.getElementById('previewImg');
-            
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                
                 reader.onload = function(e) {
                     previewImg.src = e.target.result;
                     previewContainer.style.display = 'block';
                 }
-                
                 reader.readAsDataURL(input.files[0]);
             } else {
                 previewContainer.style.display = 'none';
                 previewImg.src = '';
             }
+        }
+        window.previewImage = previewImage;
+
+        // Ensure form submit validates categories before POST
+        const movieForm = document.getElementById('movieForm');
+        if(movieForm) {
+            movieForm.addEventListener('submit', function(e) {
+                if (selectedCategories.length === 0) {
+                    e.preventDefault();
+                    alert('❌ Please select at least one category from the multi-select dropdown.');
+                    dropdownList.classList.add('show');
+                    return false;
+                }
+                return true;
+            });
         }
     </script>
 </body>
