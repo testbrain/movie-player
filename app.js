@@ -6,6 +6,7 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const methodOverride = require('method-override');
 const session = require('express-session');
 const path = require('path');
+const fs = require('fs');
 const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
@@ -48,7 +49,7 @@ try {
     params: {
       folder: 'movie-posters',
       allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
-      transformation: [{ width: 500, heinpmght: 700, crop: 'limit' }]
+      transformation: [{ width: 500, height: 700, crop: 'limit' }]
     }
   });
   
@@ -69,6 +70,51 @@ try {
   upload = multer({ storage: storage });
 }
 
+// Helper function to delete image from Cloudinary
+const deleteCloudinaryImage = async (imageUrl) => {
+  if (!cloudinaryConfigured || !imageUrl) return false;
+  
+  try {
+    // Extract public ID from Cloudinary URL
+    // URL format: https://res.cloudinary.com/cloud_name/image/upload/v1234567890/folder/filename.jpg
+    const urlParts = imageUrl.split('/');
+    const filenameWithExtension = urlParts[urlParts.length - 1];
+    const publicIdWithFolder = urlParts.slice(urlParts.indexOf('upload') + 2).join('/');
+    const publicId = publicIdWithFolder.split('.')[0]; // Remove extension
+    
+    if (publicId) {
+      const result = await cloudinary.uploader.destroy(publicId);
+      console.log(`🗑️ Deleted from Cloudinary: ${publicId}`, result);
+      return result.result === 'ok';
+    }
+    return false;
+  } catch (err) {
+    console.error('Error deleting from Cloudinary:', err);
+    return false;
+  }
+};
+
+// Helper function to delete local file
+const deleteLocalFile = (filePath) => {
+  if (!filePath) return false;
+  
+  try {
+    // Check if it's a local file path (starts with /uploads/)
+    if (filePath.startsWith('/uploads/')) {
+      const localPath = path.join(__dirname, filePath);
+      if (fs.existsSync(localPath)) {
+        fs.unlinkSync(localPath);
+        console.log(`🗑️ Deleted local file: ${localPath}`);
+        return true;
+      }
+    }
+    return false;
+  } catch (err) {
+    console.error('Error deleting local file:', err);
+    return false;
+  }
+};
+
 // Admin User Schema
 const adminSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
@@ -88,6 +134,7 @@ const movieSchema = new mongoose.Schema({
   tag: { type: String, default: '' },
   priority: { type: Number, default: 10, min: 1, max: 10 },
   views: { type: Number, default: 0 }, // Track views for trending
+  cloudinaryPublicId: { type: String, default: '' }, // Store Cloudinary public ID for easy deletion
   createdAt: { type: Date, default: Date.now }
 }, { collection: 'movies' });
 
@@ -101,7 +148,6 @@ app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 
 // Create uploads directory if it doesn't exist
-const fs = require('fs');
 if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
@@ -164,7 +210,7 @@ app.get('/', async (req, res) => {
     
     // Get trending videos (latest 10 with most views or highest priority)
     const trendingMovies = await Movie.find()
-      .sort({ views: -1, priority: -1, createdAt: -1 })
+      .sort({ /*priority: -1,*/ createdAt: -1 })
       .limit(10);
     
     // Group movies by category for the category section
@@ -294,7 +340,7 @@ app.get('/add-movie', isAuthenticated, isAdmin, (req, res) => {
   });
 });
 
-// Submit new movie (admin only) - Updated to handle multiple categories
+// Submit new movie (admin only) - Updated to handle multiple categories and delete local files
 app.post('/add-movie', isAuthenticated, isAdmin, upload.single('poster'), async (req, res) => {
   try {
     console.log('Received form data:', req.body);
@@ -329,17 +375,24 @@ app.post('/add-movie', isAuthenticated, isAdmin, upload.single('poster'), async 
     }
     
     let posterUrl = '';
+    let cloudinaryPublicId = '';
     
     // Check if poster was uploaded
     if (req.file) {
       if (cloudinaryConfigured && req.file.path) {
         posterUrl = req.file.path;
+        // Extract public ID from Cloudinary response
+        if (req.file.filename) {
+          cloudinaryPublicId = req.file.filename;
+        }
+        console.log('Cloudinary Poster URL:', posterUrl);
+        console.log('Cloudinary Public ID:', cloudinaryPublicId);
       } else if (req.file.filename) {
         posterUrl = `/uploads/${req.file.filename}`;
+        console.log('Local Poster URL:', posterUrl);
       } else {
         posterUrl = req.file.path || '';
       }
-      console.log('Poster URL:', posterUrl);
     }
     
     const newMovie = new Movie({
@@ -348,6 +401,7 @@ app.post('/add-movie', isAuthenticated, isAdmin, upload.single('poster'), async 
       movieName,
       movieUrl,
       posterUrl: posterUrl,
+      cloudinaryPublicId: cloudinaryPublicId,
       tag: tag || '',
       priority: parseInt(priority) || 10,
       views: 0
@@ -369,10 +423,39 @@ app.post('/add-movie', isAuthenticated, isAdmin, upload.single('poster'), async 
   }
 });
 
-// Delete movie route (admin only)
+// Delete movie route (admin only) - Enhanced to delete images from Cloudinary and local storage
 app.delete('/movie/:id', isAuthenticated, isAdmin, async (req, res) => {
   try {
+    // First, find the movie to get the poster URL and Cloudinary public ID
+    const movie = await Movie.findById(req.params.id);
+    
+    if (!movie) {
+      console.log('Movie not found');
+      return res.redirect('/');
+    }
+    
+    console.log(`Deleting movie: ${movie.movieName}`);
+    
+    // Delete poster image if it exists
+    if (movie.posterUrl) {
+      // Try to delete from Cloudinary if configured and has public ID
+      if (cloudinaryConfigured && movie.cloudinaryPublicId) {
+        await deleteCloudinaryImage(movie.posterUrl);
+      } 
+      // Delete local file if it's a local path
+      else if (movie.posterUrl.startsWith('/uploads/')) {
+        deleteLocalFile(movie.posterUrl);
+      }
+      // If Cloudinary is configured but no public ID, try to extract from URL
+      else if (cloudinaryConfigured && movie.posterUrl.includes('cloudinary')) {
+        await deleteCloudinaryImage(movie.posterUrl);
+      }
+    }
+    
+    // Delete the movie from database
     await Movie.findByIdAndDelete(req.params.id);
+    console.log(`✅ Movie deleted successfully: ${movie.movieName}`);
+    
     res.redirect('/');
   } catch (err) {
     console.error('Error deleting movie:', err);
@@ -380,10 +463,42 @@ app.delete('/movie/:id', isAuthenticated, isAdmin, async (req, res) => {
   }
 });
 
+// Optional: Route to clean up orphaned images (run manually or via cron job)
+app.get('/admin/cleanup-images', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const movies = await Movie.find({}, 'posterUrl cloudinaryPublicId');
+    const usedImages = movies.map(m => m.posterUrl).filter(url => url);
+    
+    // For local uploads folder cleanup
+    if (fs.existsSync('uploads')) {
+      const files = fs.readdirSync('uploads');
+      let deletedCount = 0;
+      
+      for (const file of files) {
+        const filePath = `/uploads/${file}`;
+        if (!usedImages.includes(filePath)) {
+          const fullPath = path.join('uploads', file);
+          fs.unlinkSync(fullPath);
+          deletedCount++;
+          console.log(`Deleted orphaned file: ${file}`);
+        }
+      }
+      
+      res.send(`Cleaned up ${deletedCount} orphaned local files.`);
+    } else {
+      res.send('Uploads folder does not exist.');
+    }
+  } catch (err) {
+    console.error('Error during cleanup:', err);
+    res.status(500).send('Error during cleanup: ' + err.message);
+  }
+});
+
 // Get all categories API endpoint
 app.get('/api/categories', (req, res) => {
   res.json({ categories: ALL_CATEGORIES });
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
