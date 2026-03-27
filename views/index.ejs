@@ -61,6 +61,11 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
+        .error-message a {
+            color: white;
+            text-decoration: underline;
+        }
+
         .movie-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -212,23 +217,6 @@
                 padding: 20px 15px;
             }
         }
-
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #764ba2;
-        }
     </style>
 </head>
 <body>
@@ -244,12 +232,14 @@
         <% if (error) { %>
             <div class="error-message">
                 ⚠️ <%= error %>
+                <br><br>
+                <small>To fix this: Go to MongoDB Atlas → Network Access → Add IP Address → Add 0.0.0.0/0 (allow all) or add Render.com IP ranges</small>
             </div>
         <% } %>
 
         <% if (movies && movies.length > 0) { %>
             <div class="movie-grid">
-                <% movies.forEach((movie, index) => { %>
+                <% movies.forEach((movie) => { %>
                     <div class="movie-card">
                         <div class="movie-poster">
                             <div class="movie-icon">🎥</div>
